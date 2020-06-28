@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+recv/*
+!recv/README.txt
+send/*
+!send/README.txt
+reversed/recv/*
+!reversed/recv/README.txt
+reversed/send/*
+!reversed/send/README.txt
