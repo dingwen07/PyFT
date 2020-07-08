@@ -5,9 +5,8 @@ import os
 import hashlib
 import multiprocessing
 
-file_name = 'v.flv'
-file_folder = './send/'
-file_path = file_folder + file_name
+file_path = './send/Windows.iso'
+file_name = os.path.basename(file_path)
 
 def transmit(cnn, addr, file_info):
     print(str(addr) + ' Connected')
@@ -33,14 +32,25 @@ def transmit(cnn, addr, file_info):
         cnn.close()
 
 if __name__ == "__main__":
-    if not os.path.exists(file_folder):
-        os.makedirs(file_folder)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(('', 23333 ))
     s.listen(5)
-    print('Starting service for ' + file_name + '...')
+    print('Starting service for {} ...'.format(file_name))
     file_size = os.path.getsize(file_path)
-    file_hash = hashlib.sha1(open(file_path,'rb').read()).hexdigest()
+    print('File size: {} bytes'.format(str(file_size)))
+    with open(file_path, 'rb') as f:
+        file_hash = hashlib.md5()
+        '''
+        while chunk := f.read(16384):
+            file_hash.update(chunk)
+        '''
+        while True:
+            chunk = f.read(16384)
+            if not chunk:
+                break
+            file_hash.update(chunk)
+        file_hash = file_hash.hexdigest()
+    print('File hash: {}'.format(file_hash))
     header = {
         'file_name': file_name,
         'file_size': file_size,

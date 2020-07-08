@@ -16,7 +16,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect(('extrawdw.net', 23333))
 print('Starting service for ' + file_name + '...')
 file_size = os.path.getsize(file_path)
-file_hash = hashlib.sha1(open(file_path,'rb').read()).hexdigest()
+file_hash = hashlib.md5(open(file_path,'rb').read()).hexdigest()
 file_info = {
     'file_name': file_name,
     'file_size': file_size,

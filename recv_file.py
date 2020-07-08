@@ -9,7 +9,7 @@ file_folder = './recv/'
 if not os.path.exists(file_folder):
     os.makedirs(file_folder)
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('extrawdw.net', 23333))
+s.connect(('localhost', 23333))
 print('Connected, retrieving file information...')
 stobj = s.recv(16)
 header_size = struct.unpack('I', stobj)[0]
@@ -35,8 +35,19 @@ with open(file_path, 'wb') as f:
         transmit_size = transmit_size + len(line)
 print('Done. ' + str(transmit_size) + ' bytes transmitted.')
 s.close()   
-recv_file_sha256 = hashlib.sha1(open(file_path, 'rb').read()).hexdigest()
-if recv_file_sha256 == file_hash:
+with open(file_path, 'rb') as f:
+    recv_file_hash = hashlib.md5()
+    '''
+    while chunk := f.read(16384):
+        recv_file_hash.update(chunk)
+    '''
+    while True:
+        chunk = f.read(16384)
+        if not chunk:
+            break
+        recv_file_hash.update(chunk)
+    recv_file_hash = recv_file_hash.hexdigest()
+if recv_file_hash == file_hash:
     print('HASH VERIFICATION PASSED')
 else:
     print('HASH VERIFICATION FAILED')
